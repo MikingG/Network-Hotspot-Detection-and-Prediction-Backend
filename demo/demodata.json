@@ -1,0 +1,170 @@
+{
+    "@context": "http://schema.org",
+    "@type": "EventGraph",
+    "events": [
+      {
+        "@type": "Event",
+        "@id": "event1",
+        "name": "中山大学百年校庆年首场春茗",
+        "description": "今年将迎来百年华诞的中山大学在香港举办百年校庆年首场春茗。春茗仪式上，中山大学颁发了多个校级荣衔，表彰对该校教育发展事业作出贡献的校友、社会贤达和团体机构。",
+        "startDate": "2024-04-20"
+      },
+      {
+        "@type": "Event",
+        "@id": "event2",
+        "name": "中山大学在香港设立高等研究院",
+        "description": "中山大学在香港设立了高等研究院，建设工作正加紧推进，旨在吸引全球顶尖学者，建设世界领先水平的实验室，自主培养高水平创新人才。",
+        "startDate": "2024-04-20"
+      },
+      {
+        "@type": "Event",
+        "@id": "event3",
+        "name": "中山大学青岛春茗和荣衔授予仪式",
+        "description": "中山大学近期将在青岛举办春茗和荣衔授予仪式。",
+        "startDate": null
+      }
+    ],
+    "entities": [
+      {
+        "@type": "Organization",
+        "@id": "entity1",
+        "name": "中山大学",
+        "description": "中山大学是一所综合性研究型大学，位于广州市。"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity2",
+        "name": "陈春声",
+        "description": "中山大学党委书记、中山大学教育发展基金会理事长。"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity3",
+        "name": "霍英东",
+        "description": "爱港爱国人士，曾慷慨资助中山大学的人才培养和文化体育项目。"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity4",
+        "name": "伍沾德"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity5",
+        "name": "曾宪梓"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity6",
+        "name": "陈运河"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity7",
+        "name": "刘修婉"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity8",
+        "name": "饶宗颐"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity9",
+        "name": "谢锦鹏"
+      },
+      {
+        "@type": "Person",
+        "@id": "entity10",
+        "name": "林浩然",
+        "description": "中国工程院院士，中山大学生命科学学院教授。"
+      }
+    ],
+    "relationships": [
+      {
+        "@id": "relation1",
+        "relationshipType": "HasParticipant",
+        "source": "event1",
+        "target": "entity2"
+      },
+      {
+        "@id": "relation2",
+        "relationshipType": "HasParticipant",
+        "source": "event1",
+        "target": "entity3"
+      },
+      {
+        "@id": "relation3",
+        "relationshipType": "HasParticipant",
+        "source": "event1",
+        "target": "entity4"
+      },
+      {
+        "@id": "relation4",
+        "relationshipType": "HasParticipant",
+        "source": "event1",
+        "target": "entity5"
+      },
+      {
+        "@id": "relation5",
+        "relationshipType": "HasParticipant",
+        "source": "event2",
+        "target": "entity10"
+      },
+      {
+        "@id": "relation6",
+        "relationshipType": "HasParticipant",
+        "source": "event1",
+        "target": "entity6"
+      },
+      {
+        "@id": "relation7",
+        "relationshipType": "HasParticipant",
+        "source": "event1",
+        "target": "entity7"
+      },
+      {
+        "@id": "relation8",
+        "relationshipType": "HasParticipant",
+        "source": "event1",
+        "target": "entity8"
+      },
+      {
+        "@id": "relation9",
+        "relationshipType": "HasParticipant",
+        "source": "event1",
+        "target": "entity9"
+      },
+      {
+        "@id": "relation10",
+        "relationshipType": "LocatedAt",
+        "source": "event1",
+        "target": "entity1"
+      },
+      {
+        "@id": "relation11",
+        "relationshipType": "LocatedAt",
+        "source": "event2",
+        "target": "entity1"
+      },
+      {
+        "@id": "relation12",
+        "relationshipType": "LocatedAt",
+        "source": "event3",
+        "target": "entity1"
+      },
+      {
+        "@id": "relation13",
+        "relationshipType": "Causes",
+        "source": "event1",
+        "target": "event2"
+      },
+      {
+        "@id": "relation14",
+        "relationshipType": "Follows",
+        "source": "event1",
+        "target": "event3"
+      }
+    ]
+  }
+  
