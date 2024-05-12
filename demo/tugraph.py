@@ -2,7 +2,8 @@ from TuGraphClient import TuGraphClient
 import json
 def create_nodes_and_relationships(client, data):
     cyphers = []
-
+    # 创建文档节点的Cypher语句
+    
     # 创建事件节点的Cypher语句
     for event in data["events"]:
         eventID = event["@id"]

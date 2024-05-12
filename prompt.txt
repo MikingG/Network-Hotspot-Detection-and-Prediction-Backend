@@ -1,0 +1,42 @@
+请分析并提取以下文章内容中的关键信息，按照指定的结构化格式输出事件节点、实体节点以及它们之间的关系（事件-事件、事件-实体、实体-实体）。确保输出遵循JSON-LD规范，并明确标注每个节点和边的类型及标识符，以便于构建事件图谱。
+Article Content: （在此处插入文章内容）
+Extraction Instruction:
+Event Nodes: 识别并总结文章中描述的所有独特事件，包括但不限于会议、事故、发布、庆典等。为每个事件创建一个事件节点，包含事件的名称、描述、开始日期（格式：yyyy-mm-dd，如果没有提及或无法推断则填null）。使用@type: "Event"标记此类节点。@id格式为eventnum,如event1,event2。
+Entity Nodes: 抽取所有提及的重要实体，如人名、组织机构、地点等，并为每个实体创建一个节点。实体节点应至少包含名称和描述，使用适当的类型如@type: "Person", "Organization", 或 "Place"进行标记。@id格式为entitynum,如entity1,entity2。
+Relationships:
+Event-Event: 识别并描述任何两个事件之间的顺序关系（如“导致”、“紧接着”）、因果关系等，使用relationshipType: "Follows", "Causes"等来定义边。
+Event-Entity: 确定每个事件涉及的实体（参与者、地点、主办方等），使用relationshipType: "HasParticipant", "LocatedAt"等描述关联。
+Entity-Entity: 抓取实体之间的关系，例如隶属、合作、竞争、朋友等，使用相应的relationshipType描述这些联系。
+Output Format Example: 
+{
+  "@context": "http://schema.org",
+  "@type": "EventGraph",
+  "events": [
+    {
+      "@type": "Event",
+      "@id": "<事件ID>",
+      "name": "<事件名称>",
+      "description": "<事件描述>",
+      "startDate": "<事件开始日期>",
+    }
+  ],
+  "entities": [
+    {
+      "@type": "<实体类型>",
+      "@id": "<实体ID>",
+      "name": "<实体名称>",
+      "description": "<实体描述>"
+    },
+    {...} // 更多实体...
+  ],
+  "relationships": [
+    {
+      "@id": "<关系ID>",
+      "relationshipType": "<关系类型>",
+      "source": "<来源事件/实体ID>",
+      "target": "<目标事件/实体ID>"
+    },
+    {...} // 更多关系...
+  ]
+}
+请确保输出结果是结构化且层次分明的JSON格式，以便于直接应用于图谱构建。
