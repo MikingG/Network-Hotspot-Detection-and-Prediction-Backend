@@ -19,9 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-<<<<<<< HEAD
     path('api/v1/', include('tadmin.urls')),
-=======
     path('user/', include('users.urls')), 
->>>>>>> 95f1548 (login)
 ]

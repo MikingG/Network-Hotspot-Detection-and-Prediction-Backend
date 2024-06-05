@@ -10,10 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 95f1548 (login)
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,13 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-<<<<<<< HEAD
-=======
 # 自定义认证后端
 # AUTHENTICATION_BACKENDS = ['users.auth_backends.CustomBackend']
 
 APPEND_SLASH = False
->>>>>>> 95f1548 (login)
 
 # Application definition
 
@@ -48,17 +41,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-<<<<<<< HEAD
     'tadmin',
-    'rest_framework',
     'django_filters',
-    'drf_yasg',  # swagger
-=======
+    # 'drf_yasg',  # swagger
     'users',
     'rest_framework',
     'rest_framework_simplejwt',
-    'django_filters',
->>>>>>> 95f1548 (login)
     'corsheaders',
 ]
 
@@ -71,10 +59,6 @@ REST_FRAMEWORK = {
     # 设置分页  
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  
     'PAGE_SIZE': 5, 
-<<<<<<< HEAD
-}
-
-=======
     # 配置JWT的认证方式
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -82,7 +66,6 @@ REST_FRAMEWORK = {
 }
 
 
->>>>>>> 95f1548 (login)
 # 如果可以实现模糊查询，则以下语句可省略
 FILTERS_DEFAULT_LOOKUP_EXPR = 'icontains'
 
