@@ -37,7 +37,11 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
+<<<<<<< HEAD
 VIRTUAL_ENV="E:\Django\project\Network_Hotspot_Detection_Prediction\venv"
+=======
+VIRTUAL_ENV="E:\Django\project_vscode\Network_Hotspot_Detection_Prediction\venv"
+>>>>>>> 95f1548 (login)
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
