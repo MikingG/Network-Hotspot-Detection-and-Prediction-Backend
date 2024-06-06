@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # app name
     'tadmin',
-    'test0',
     'users',
     # other dependences
     'rest_framework',
