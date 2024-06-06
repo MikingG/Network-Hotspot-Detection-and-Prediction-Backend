@@ -41,12 +41,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # app name
     'tadmin',
-    'django_filters',
-    # 'drf_yasg',  # swagger
+    'test0',
     'users',
+    # other dependences
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_filters',
     'corsheaders',
 ]
 
