@@ -8,11 +8,15 @@ from rest_framework.views import APIView
 
 
 class LoginView(TokenObtainPairView):
+    # 通过 Django REST framework 的序列化器机制间接完成
     serializer_class = MyTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
+        # 创建了MyTokenObtainPairSerializer的一个实例，并将请求的数据传递给这个序列化器
+        # 这个实例化过程是Django REST framework自动完成的，因为它知道LoginView的serializer_class属性被设置为MyTokenObtainPairSerializer
         serializer = self.get_serializer(data=request.data)
         try:
+            # 调用了序列化器的is_valid()方法，会自动调用validate方法来验证请求数据
             serializer.is_valid(raise_exception=True)
         except AuthenticationFailed:
             return Response({
@@ -23,7 +27,8 @@ class LoginView(TokenObtainPairView):
             })
         
         token = serializer.validated_data.get('access')
-        refresh_token = serializer.validated_data.get('refresh')
+        # 在access_token过期时，用来获取一个新的access_token而不需要用户重新登录
+        # refresh_token = serializer.validated_data.get('refresh')
         
         response_data = {
             "success": True,
@@ -31,6 +36,7 @@ class LoginView(TokenObtainPairView):
             "message": "成功",
             "data": {
                 "token": str(token),
+                # 当access_token过期时，客户端可以使用refresh_token向服务器发起请求
                 # "refresh_token": str(refresh_token),
             }
         }
@@ -56,7 +62,7 @@ class UserInfoView(APIView):
         # 用户信息可以从request.user获取，这里我们简单返回用户名
         username = request.user.username
         # 您可以在这里添加更多的用户信息，例如用户的头像链接等
-        # user_avatar = 'https://example.com/avatar.png'
+        user_avatar = "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2021%2F1120%2F783a7b4ej00r2tvvx002fd200hs00hsg00hs00hs.jpg&thumbnail=660x2147483647&quality=80&type=jpg"
 
         return Response({
             "success": True,
@@ -64,6 +70,6 @@ class UserInfoView(APIView):
             "message": "成功",
             "data": {
                 "name": username,
-                # "avatar": user_avatar,
+                "avatar": user_avatar,
             }
         })
