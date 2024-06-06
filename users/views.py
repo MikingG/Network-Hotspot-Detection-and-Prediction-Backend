@@ -1,10 +1,12 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-from users.serializers import MyTokenObtainPairSerializer
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+
+from users.serializers import MyTokenObtainPairSerializer
 
 
 class LoginView(TokenObtainPairView):
@@ -72,4 +74,15 @@ class UserInfoView(APIView):
                 "name": username,
                 "avatar": user_avatar,
             }
+        })
+    
+class LogoutView(APIView):
+    def post(self, request, *args, **kwargs):
+        # 通常这里不需要做任何事情，因为JWT是无状态的
+        # 但是可以返回一个成功的响应来指示客户端登出操作已完成
+        return Response({
+            "success": True,
+            "code": 20000,
+            "message": "成功登出",
+            "data": {}
         })
