@@ -57,16 +57,18 @@ class LoginView(TokenObtainPairView):
         return response
     
 class UserInfoView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # 用户信息可以从request.user获取，这里我们简单返回用户名
+        # 由于我们使用了IsAuthenticated权限，我们可以直接从request.user获取用户信息
         username = request.user.username
-        # 您可以在这里添加更多的用户信息，例如用户的头像链接等
+        print(username)
+        # 这里可以添加更多的用户信息，例如用户的头像链接等
         user_avatar = "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2021%2F1120%2F783a7b4ej00r2tvvx002fd200hs00hsg00hs00hs.jpg&thumbnail=660x2147483647&quality=80&type=jpg"
 
-        return Response({
+        # 构造响应数据
+        response_data = {
             "success": True,
             "code": 20000,
             "message": "成功",
@@ -74,9 +76,13 @@ class UserInfoView(APIView):
                 "name": username,
                 "avatar": user_avatar,
             }
-        })
+        }
+
+        # 返回响应
+        return Response(response_data)
     
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         # 通常这里不需要做任何事情，因为JWT是无状态的
         # 但是可以返回一个成功的响应来指示客户端登出操作已完成
