@@ -1,3 +1,8 @@
+import csv
+import math
+import os
+import random
+import pandas as pd
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -92,3 +97,83 @@ class LogoutView(APIView):
             "message": "成功登出",
             "data": {}
         })
+
+
+class getHotspotsView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        data = []
+        file_path = os.path.join('data', 'key_info.csv')
+        # 读取key_info.csv文件，提取Event Title和Number of news items字段
+        with open(file_path, 'r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                hotspot = row['Event Title']
+                score = int(row['Number of news items'])
+                transformed_score = math.log(score + 2)  # 使用自然对数
+                random_noise = random.uniform(-0.5, 0.5)  # 生成一个范围在-5到5之间的随机数
+                final_score = transformed_score + random_noise
+                # 将提取的数据添加到data列表中
+                data.append({'hotspot': hotspot, 'score': final_score})
+        # 构造响应数据
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "成功",
+            "data": data
+        }
+        return Response(response_data)
+
+
+class getCategoryView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        file_path = os.path.join('data', 'key_info.csv')
+        key_info = pd.read_csv(file_path, encoding='utf-8')
+        # 按类别分组并计算每个类别的新闻数量之和
+        grouped_data = key_info.groupby('Event Category')['Number of news items'].sum().reset_index()
+        # 计算总和
+        total_value = grouped_data['Number of news items'].sum()
+        # 构建响应数据
+        data = [{'name': category, 'value': round(value / total_value * 100, 2)} 
+                for category, value in zip(grouped_data['Event Category'], grouped_data['Number of news items'])]
+        
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "成功",
+            "data": data
+        }
+        return Response(response_data)
+
+
+class getWordFrequencyView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        words = []
+        values = []
+        file_path = os.path.join('data', 'word_frequencies.csv')
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            words = next(reader)
+            values = next(reader)
+        
+        # 将值转换为整数
+        values = [int(value) for value in values]
+        
+        # 创建数据字典
+        word_frequencies = [{'name': word, 'value': value} for word, value in zip(words, values)]
+        
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "成功",
+            "data": word_frequencies
+        }
+        
+        return Response(response_data)
