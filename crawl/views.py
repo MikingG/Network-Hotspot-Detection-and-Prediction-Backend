@@ -18,13 +18,13 @@ class BriefInfoView(APIView):
             data = {
                 'no': crawl_data.no,
                 'name': crawl_data.name,
-                'last_update_time': crawl_data.last_update_time.isoformat(),
+                'last_update_time': crawl_data.last_update_time,
                 'number': crawl_data.number,
             }
             data_list.append(data)
         response_data = {
             "success": True,
-            "code": 200,
+            "code": 20000,
             "message": "成功",
             "data": data_list,
         }
