@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     # app name
     'tadmin',
     'users',
+    'crawl',
     # other dependences
     'rest_framework',
     'rest_framework_simplejwt',
