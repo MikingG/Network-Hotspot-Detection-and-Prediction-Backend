@@ -4,7 +4,7 @@ import pandas as pd
 import time
 
 
-# 请替换以下为您的腾讯云API密钥ID和密钥，用的时候记得填
+# 请替换以下为您的腾讯云API密钥ID和密钥，用的时候记得填，为了安全先不填了
 # SECRET_ID = ""
 # SECRET_KEY = ""
 
