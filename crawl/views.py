@@ -1,9 +1,14 @@
+import json
+import os
 from django.shortcuts import render
+import pandas as pd
 from crawl.models import CrawlBriefData
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from crawl.utils import get_csv_name
 
 # Create your views here.
 class BriefInfoView(APIView):
@@ -38,14 +43,35 @@ class DetailView(APIView):
 
     def get(self, request):
         # 构造响应数据
-        response_data = {
-            "success": True,
-            "code": 20000,
-            "message": "成功",
-            "data": {
-                
+        source = request.GET['source']
+        crawl_data_dict, csv_names = get_csv_name()
+        csv_file_path = ""
+        encoding = "utf-8"
+        for csv_name in csv_names:
+            print("".format(csv_name))
+            if csv_name == str.format("{}_中山大学", source) or csv_name == str.format("中山大学{}", source):
+                csv_file_path = os.path.join(crawl_data_dict, csv_name+'.csv')
+                if csv_name[-2] == '凰' or csv_name[-2] == '讯':
+                    encoding = 'gb2312'
+        
+        if csv_file_path == "":
+            response_data = {
+                "success": False,
+                "code": 20001,
+                "message": "source is wrong",
+                "data": '',
             }
-        }
+            return Response(response_data)
+        else:
+            df = pd.read_csv(csv_file_path, encoding=encoding, encoding_errors="ignore")
+            json_data = df.to_json(orient='records')
 
-        # 返回响应
-        return Response(response_data)
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "成功",
+                "data": json_data,
+            }
+
+            # 返回响应
+            return Response(response_data)
