@@ -1,8 +1,3 @@
-import csv
-import math
-import os
-import random
-import pandas as pd
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -13,6 +8,15 @@ from rest_framework.views import APIView
 
 from users.serializers import MyTokenObtainPairSerializer
 
+import csv
+import math
+import os
+import random
+import pandas as pd
+
+
+
+#---------- 登录退出系统 ----------#
 
 class LoginView(TokenObtainPairView):
     # 通过 Django REST framework 的序列化器机制间接完成
@@ -35,7 +39,7 @@ class LoginView(TokenObtainPairView):
         
         token = serializer.validated_data.get('access')
         # 在access_token过期时，用来获取一个新的access_token而不需要用户重新登录
-        # refresh_token = serializer.validated_data.get('refresh')
+        refresh_token = serializer.validated_data.get('refresh')
         
         response_data = {
             "success": True,
@@ -44,7 +48,7 @@ class LoginView(TokenObtainPairView):
             "data": {
                 "token": str(token),
                 # 当access_token过期时，客户端可以使用refresh_token向服务器发起请求
-                # "refresh_token": str(refresh_token),
+                "refresh_token": str(refresh_token),
             }
         }
         
@@ -61,8 +65,9 @@ class LoginView(TokenObtainPairView):
         
         return response
     
+
 class UserInfoView(APIView):
-    # authentication_classes = [JWTAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -85,7 +90,8 @@ class UserInfoView(APIView):
 
         # 返回响应
         return Response(response_data)
-    
+
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
@@ -98,6 +104,11 @@ class LogoutView(APIView):
             "data": {}
         })
 
+#---------------------------------#
+
+
+
+#---------- 数据基本分析 ----------#
 
 class getHotspotsView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -177,3 +188,5 @@ class getWordFrequencyView(APIView):
         }
         
         return Response(response_data)
+
+#---------------------------------#

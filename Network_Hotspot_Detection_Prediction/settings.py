@@ -87,6 +87,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny'
     ),
+    'EXCEPTION_HANDLER': 'users.utils.custom_exception_handler',
 }
 
 from rest_framework_simplejwt.settings import api_settings as jwt_api_settings
@@ -192,7 +193,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Shanghai"
 
 USE_I18N = True
 
