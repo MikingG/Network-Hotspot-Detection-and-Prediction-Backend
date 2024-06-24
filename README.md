@@ -1,8 +1,8 @@
 # Network-Hotspot-Detection-and-Prediction
 
+## Quick Start
 
-
-1. 如何运行项目
+1. ### 如何运行项目
 
   如果使用 vscode 运行，可以参考以下链接
 
@@ -19,10 +19,8 @@
 
   python manage.py runserver
 
+2. ### 可以创建多个应用来分开项目不同的功能，命令如下
 
-
-2. 可以创建多个应用来分开项目不同的功能，命令如下
- 
   django-admin startapp 'app名'
 
   ![alt text](image.png)
@@ -33,16 +31,14 @@
 
   一开始只有以上这些文件，可以根据需求自己添加 urls.py（必）, serializers.py 等文件
 
-
-
-3. 数据库相关的操作
+3. ### 数据库相关的操作
 
   *** 注意：记得查看项目目录的 settings.py 声明的 Database 是否于自己的数据库对应
 
   先在某个 app 里的 models.py 文件定义数据模型
 
   然后执行这两个命令：
-  
+
   python manage.py makemigrations
 
   python manage.py migrate 'app名'
@@ -51,3 +47,10 @@
 
   别管那条报错的，手滑执行错了命令
 
+# 可能遇到的问题
+
+```
+error: Microsoft Visual C++ 14.0 or greater is required. Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visual-cpp-build-tools/
+```
+
+在非常干净的（windows）环境中安装依赖可能会遇到这个报错。然后我直接把backports.zoneinfo==0.2.1这个安装要求注释掉了。

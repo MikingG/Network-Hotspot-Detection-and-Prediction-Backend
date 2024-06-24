@@ -190,3 +190,16 @@ class getWordFrequencyView(APIView):
         return Response(response_data)
 
 #---------------------------------#
+
+#---------- 事件图谱 ----------#
+class getEventListView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        data = []
+        
+
+class getEventGraphView(APIView):
+    def post(self, request):
+        # 获取请求参数
+        event_name = request.data.get('event_name')

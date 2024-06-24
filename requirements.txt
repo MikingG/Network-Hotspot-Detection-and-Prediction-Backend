@@ -1,5 +1,5 @@
 asgiref==3.8.1
-backports.zoneinfo==0.2.1
+# backports.zoneinfo==0.2.1
 cffi==1.16.0
 cryptography==42.0.8
 Django==4.2.13

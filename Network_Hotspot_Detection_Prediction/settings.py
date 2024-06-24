@@ -14,21 +14,21 @@ from datetime import timedelta
 import os
 from pathlib import Path
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+#         },
+#     },
+# }
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -162,7 +162,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', #数据库的类型
         'NAME': 'network_hotspot_detection_prediction', #所使用的数据库的名称
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': '0527',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
