@@ -19,6 +19,9 @@
 
   python manage.py runserver
 
+由于8000端口会与tugraph冲突，所以要监听其他端口，比如8001端口：
+python manage.py runserver 127.0.0.1:8001
+
 2. ### 可以创建多个应用来分开项目不同的功能，命令如下
 
   django-admin startapp 'app名'
@@ -42,6 +45,8 @@
   python manage.py makemigrations
 
   python manage.py migrate 'app名'
+
+如果想一次性迁移所有app，则不用输入app名：python manage.py migrate
 
   ![alt text](image-2.png)
 
