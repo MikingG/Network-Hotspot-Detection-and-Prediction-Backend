@@ -1,3 +1,5 @@
+
+from neo4j import GraphDatabase
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -196,7 +198,30 @@ class getEventListView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        data = []
+        URI = "bolt://localhost:7687"
+        AUTH = ("admin", "0527")
+        with GraphDatabase.driver(URI, auth=AUTH) as client:
+            session = client.session(database="eventgraph1")
+            ret = session.run("match (n:抽象事件) return n")
+            event_list = []
+            for item in ret.data():
+                event_list.append(item['n']['name'])
+            
+            # 构建响应数据
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "成功",
+                "data": event_list
+                }
+            return Response(response_data)
+            # 构建响应数据
+            # return Response({
+            #     'success': True,
+            #     'code': 20000,
+            #     'message': 'success',
+            #     'data': event_list
+            # })
         
 
 class getEventGraphView(APIView):
