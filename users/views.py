@@ -191,7 +191,10 @@ class getWordFrequencyView(APIView):
 
 #---------------------------------#
 
-#---------- 事件图谱 ----------#
+
+
+#------------ 事件图谱 ------------#
+
 class getEventListView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -203,3 +206,75 @@ class getEventGraphView(APIView):
     def post(self, request):
         # 获取请求参数
         event_name = request.data.get('event_name')
+
+#---------------------------------#
+
+
+
+#------------ 热点预测 ------------#
+
+class getTrendFrequencyView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        word_frequencies = []
+        file_path = os.path.join('trend_prediction/data', 'tiktok_中山大学_05_keyword_counts.csv')
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader)  # 跳过表头
+            
+            for keyword, total_count in reader:
+                # 直接读取关键字和计数，无需转换，因为它们已经是预期的格式
+                word_frequencies.append({'name': keyword, 'value': int(total_count)})
+        
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "成功",
+            "data": word_frequencies
+        }
+        
+        return Response(response_data)
+    
+
+class getTrendHotspotView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        word_frequencies = []
+        total_sum = 0  # 用于累加所有的sample_count
+        file_path = os.path.join('trend_prediction/data', 'tiktok_中山大学_06_cluster_keywords_topics.csv')
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader)  # 跳过表头
+            
+            # 第一次遍历以计算总频数和
+            for _, sample_count_str in reader:
+                sample_count = int(sample_count_str)
+                total_sum += sample_count
+                
+            # 将文件指针重置到开始，以便再次遍历
+            f.seek(0)
+            next(reader)  # 再次跳过表头
+            
+            # 第二次遍历以计算百分比
+            for topic, sample_count_str in reader:
+                sample_count = int(sample_count_str)
+                # 计算百分比
+                percent = (sample_count / total_sum) * 100 if total_sum != 0 else 0
+                word_frequencies.append({'name': topic, 'value': round(percent, 2)})
+        
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "成功",
+            "data": word_frequencies
+        }
+        
+        return Response(response_data)
+
+#---------------------------------#

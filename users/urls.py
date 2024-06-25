@@ -1,5 +1,5 @@
 from django.urls import path
-from users.views import LoginView, UserInfoView, LogoutView, getHotspotsView, getCategoryView, getWordFrequencyView
+from users.views import LoginView, UserInfoView, LogoutView, getHotspotsView, getCategoryView, getWordFrequencyView, getTrendFrequencyView, getTrendHotspotView
 
 urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
@@ -8,4 +8,6 @@ urlpatterns = [
     path('getHotspots/', getHotspotsView.as_view(), name='getHotspots'),
     path('getCategory/', getCategoryView.as_view(), name='getCategory'),
     path('getWordFrequency/', getWordFrequencyView.as_view(), name='getWordFrequency'),
+    path('getTrendWordFrequency/', getTrendFrequencyView.as_view(), name='getTrendWordFrequency'),
+    path('getTrendHotspots/', getTrendHotspotView.as_view(), name='getTrendHotspot'),
 ]
