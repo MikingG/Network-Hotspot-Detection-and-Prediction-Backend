@@ -10,6 +10,8 @@ from rest_framework.views import APIView
 
 from users.serializers import MyTokenObtainPairSerializer
 
+from users.models import UserInfo
+
 import csv
 import math
 import os
@@ -257,7 +259,7 @@ class getTrendFrequencyView(APIView):
         response_data = {
             "success": True,
             "code": 20000,
-            "message": "成功",
+            "message": "successfully add user info",
             "data": word_frequencies
         }
         
@@ -303,3 +305,128 @@ class getTrendHotspotView(APIView):
         return Response(response_data)
 
 #---------------------------------#
+class addUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Both way can get info from POST
+        new_username = request.POST.get('username')
+        new_password = request.user.password
+        print(f"username: {new_username}, password:{new_password}")
+        new_user=UserInfo(username=new_username,password=new_password)
+
+        # if the username already exist, report error
+        if UserInfo.objects.filter(username=new_username).exists():
+            response_data={
+                "success": False,
+                "code": 40001,
+                "message": "username already exist",
+            }
+            return Response(response_data)
+        # Check if username or password is empty in frontend
+        try:
+            new_user.save()
+
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "Successfully add user info",
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data={
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to add user info: str{e}"
+            }
+            return Response(response_data)
+
+class deleteUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        new_username = request.POST.get('username')
+        print(f"username: {new_username}")
+        if not UserInfo.objects.filter(username=new_username).exists():
+            response_data={
+                "success": False,
+                "code": 40001,
+                "message": "user not exists",
+            }
+            return Response(response_data)
+        try:
+            UserInfo.objects.filter(username=new_username).delete()
+            response_data={
+                "success": True,
+                "code": 20000,
+                "message": "successfully update user info",
+            }
+            return Response(response_data)
+
+        except Exception as e:
+            response_data={
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to delete user info: str{e}"
+            }
+            return Response(response_data)
+
+
+class updateUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        new_username = request.POST.get('username')
+        new_password = request.POST.get('password')
+        print(f"username: {new_username}, password:{new_password}")
+        if not UserInfo.objects.filter(username=new_username).exists():
+            response_data={
+                "success": False,
+                "code": 40001,
+                "message": "user not exists",
+            }
+            return Response(response_data)
+        try:
+            UserInfo.objects.filter(username=new_username).update(password=new_password)
+            response_data={
+                "success": True,
+                "code": 20000,
+                "message": "successfully update user info",
+            }
+            return Response(response_data)
+
+        except Exception as e:
+            response_data={
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to update user info: str{e}"
+            }
+            return Response(response_data)
+
+class getUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user_list = []
+            for user in UserInfo.objects.all():
+                user_list.append([user.username, user.password])
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "successfully get user info",
+                "data": user_list
+            }
+            return Response(response_data)
+
+        except Exception as e:
+            response_data = {
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to update user info: str{e}"
+            }
+            return Response(response_data)
