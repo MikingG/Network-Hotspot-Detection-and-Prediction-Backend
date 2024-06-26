@@ -266,7 +266,7 @@ class getTrendHotspotView(APIView):
                 sample_count = int(sample_count_str)
                 # 计算百分比
                 percent = (sample_count / total_sum) * 100 if total_sum != 0 else 0
-                word_frequencies.append({'name': topic, 'value': round(percent, 2)})
+                word_frequencies.append({'hotspot': topic, 'score': round(percent, 2)})
         
         response_data = {
             "success": True,
