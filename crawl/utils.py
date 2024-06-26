@@ -13,16 +13,22 @@ def Stamp2Time(timestamp):
     formatted_time = local_time.strftime("%Y-%m-%d %H:%M:%S")
     return formatted_time
 
-def load_initial_brief_data(apps, schema_editor):
-    CrawlBriefData = apps.get_model("crawl", 'CrawlBriefData')
-
-    initial_brief_data = []
+def get_csv_name():
     crawl_data_dict = './crawl_data_csv'
     crawl_dir = os.listdir(crawl_data_dict)
     csv_list = [file for file in crawl_dir if os.path.isfile(os.path.join(crawl_data_dict, file))]
 
     # csv list name
     csv_names = [os.path.splitext(csv)[0] for csv in csv_list]
+
+    return crawl_data_dict, csv_names
+
+def load_initial_brief_data(apps, schema_editor):
+    CrawlBriefData = apps.get_model("crawl", 'CrawlBriefData')
+
+    initial_brief_data = []
+    # csv list name
+    crawl_data_dict, csv_names = get_csv_name()
     index = 1
     for csv_name in csv_names:
         num = 0
