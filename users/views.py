@@ -207,7 +207,11 @@ class getEventListView(APIView):
         AUTH = ("admin", "0527")
         with GraphDatabase.driver(URI, auth=AUTH) as client:
             session = client.session(database="eventgraph1")
-            ret = session.run("match (n:抽象事件) return n")
+            # print(request.GET.get('kind'))
+            if request.GET.get('kind')== 'event':
+                ret = session.run("match (n:抽象事件) return n")
+            elif request.GET.get('kind')== 'entity':
+                ret = session.run("match (n:抽象实体) return n")
             event_list = []
             for item in ret.data():
                 event_list.append(item['n']['name'])
