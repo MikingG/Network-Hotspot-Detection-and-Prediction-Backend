@@ -44,6 +44,7 @@ class DetailView(APIView):
     def get(self, request):
         # 构造响应数据
         source = request.GET['source']
+        # print(request)
         crawl_data_dict, csv_names = get_csv_name()
         csv_file_path = ""
         encoding = "utf-8"
@@ -58,7 +59,7 @@ class DetailView(APIView):
             response_data = {
                 "success": False,
                 "code": 20001,
-                "message": "source is wrong",
+                "message": source,
                 "data": '',
             }
             return Response(response_data)
