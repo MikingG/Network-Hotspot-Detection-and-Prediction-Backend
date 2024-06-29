@@ -434,3 +434,37 @@ class getUserView(APIView):
                 "message": f"Failed to update user info: str{e}"
             }
             return Response(response_data)
+class modifyPasswordView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        print(request.data)
+        old_password = request.data.get('oldPassword')
+        new_password = request.data.get('newPassword')
+        print(f"old_password: {old_password}, new_password: {new_password}")
+        # 检验旧password
+        if not UserInfo.objects.filter(username=request.user.username, password=old_password).exists():
+            response_data = {
+                "success": False,
+                "code": 40001,
+                "message": "old password is wrong",
+            }
+            return Response(response_data)
+        # 修改密码
+        try:
+            UserInfo.objects.filter(username=request.user.username).update(password=new_password)
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "successfully update user info",
+            }
+            return Response(response_data)
+        
+        except Exception as e:
+            response_data = {
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to update user info: str{e}"
+            }
+            return Response(response_data)
+        
