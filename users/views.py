@@ -270,6 +270,36 @@ class getTrendFrequencyView(APIView):
         return Response(response_data)
     
 
+class getTrendRankingView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        trend_ranking = []
+        file_path = os.path.join('trend_prediction/data', 'tiktok_中山大学_07_title_ranking.csv')
+        # file_path = os.path.join('trend_prediction/data', 'tiktok_中山大学_05_keyword_counts.csv')
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader)  # 跳过表头
+            
+            for title, trending_probability, topic in reader:
+                # 直接读取关键字和计数，无需转换，因为它们已经是预期的格式
+                trend_ranking.append({'name': title, 'value': trending_probability, 'type': topic})
+            # for keyword, total_count in reader:
+            #     # 直接读取关键字和计数，无需转换，因为它们已经是预期的格式
+            #     trend_ranking.append({'name': keyword, 'value': int(total_count)})
+        
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "successfully fetched trend ranking data",
+            "data": trend_ranking
+        }
+        
+        return Response(response_data)
+    
+
 class getTrendHotspotView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]

@@ -1,6 +1,6 @@
 from django.urls import path
-from users.views import LoginView, UserInfoView, LogoutView, getHotspotsView, getCategoryView, getWordFrequencyView,getEventListView,getTrendFrequencyView, getTrendHotspotView,\
-                        addUserView,deleteUserView, modifyPasswordView,updateUserView,getUserView
+from users.views import LoginView, UserInfoView, LogoutView, getHotspotsView, getCategoryView, getWordFrequencyView, getEventListView, getTrendFrequencyView, getTrendRankingView, getTrendHotspotView,\
+                        addUserView, deleteUserView, modifyPasswordView, updateUserView, getUserView
 
 urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
@@ -11,6 +11,7 @@ urlpatterns = [
     path('getWordFrequency/', getWordFrequencyView.as_view(), name='getWordFrequency'),
     path('geteventlist/', getEventListView.as_view(), name='geteventlist'),
     path('getTrendWordFrequency/', getTrendFrequencyView.as_view(), name='getTrendWordFrequency'),
+    path('getTrendRanking/', getTrendRankingView.as_view(), name='getTrendRanking'),
     path('getTrendHotspots/', getTrendHotspotView.as_view(), name='getTrendHotspot'),
     path('addUser/', addUserView.as_view(), name='add_user'),
     path('deleteUser/', deleteUserView.as_view(), name='delete_user'),
