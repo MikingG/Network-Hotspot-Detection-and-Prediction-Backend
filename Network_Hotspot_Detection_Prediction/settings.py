@@ -99,7 +99,7 @@ AUTH_USER_MODEL = 'users.UserInfo'
 # 使用 username 作为用户的标识符
 # jwt_api_settings.USER_ID_FIELD = 'username'
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
