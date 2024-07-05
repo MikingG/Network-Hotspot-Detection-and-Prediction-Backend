@@ -4,8 +4,8 @@ import logging
 import time
 logging.basicConfig(level=logging.INFO)
 apikey = ''
-with open('apikey.txt', 'r') as f:
-    apikey = f.read().splitlines()
+with open('event_graph/apikey.txt', 'r') as f:
+    apikey = f.read()
 models = ['gpt-3.5-turbo-1106']
 
 def askgpt(text):
@@ -32,6 +32,8 @@ def askgpt(text):
             try:
                 response = client.chat.completions.create(
                 model=model,
+                temperature=0.0,
+                top_p=1,
                 messages=[{"role": "user", "content": text}],
                 response_format= {"type":"json_object"},
                 timeout=max_retry_delay)

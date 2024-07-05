@@ -1,3 +1,5 @@
+
+from neo4j import GraphDatabase
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -7,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from users.serializers import MyTokenObtainPairSerializer
+
+from users.models import UserInfo
 
 import csv
 import math
@@ -73,10 +77,19 @@ class UserInfoView(APIView):
     def get(self, request):
         # 由于我们使用了IsAuthenticated权限，我们可以直接从request.user获取用户信息
         username = request.user.username
-        print(username)
-        # 这里可以添加更多的用户信息，例如用户的头像链接等
-        user_avatar = "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2021%2F1120%2F783a7b4ej00r2tvvx002fd200hs00hsg00hs00hs.jpg&thumbnail=660x2147483647&quality=80&type=jpg"
-
+        try:
+            user = UserInfo.objects.get(username=username) # "filter" is not useful. beacuse it returns queryset, which is a list.
+            is_staff = user.is_staff
+            # 这里可以添加更多的用户信息，例如用户的头像链接等
+            user_avatar = "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2021%2F1120%2F783a7b4ej00r2tvvx002fd200hs00hsg00hs00hs.jpg&thumbnail=660x2147483647&quality=80&type=jpg"
+        except User.DoesNotExist:
+            # 如果用户不存在，返回一个错误响应
+            return Response({
+                "success": False,
+                "code": 40400,
+                "message": "用户不存在",
+                "data": {}
+            })
         # 构造响应数据
         response_data = {
             "success": True,
@@ -85,6 +98,7 @@ class UserInfoView(APIView):
             "data": {
                 "name": username,
                 "avatar": user_avatar,
+                "is_staff": is_staff
             }
         }
 
@@ -190,3 +204,376 @@ class getWordFrequencyView(APIView):
         return Response(response_data)
 
 #---------------------------------#
+
+
+
+#------------ 事件图谱 ------------#
+
+class getEventListView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        URI = "bolt://localhost:7687"
+        AUTH = ("admin", "0527")
+        with GraphDatabase.driver(URI, auth=AUTH) as client:
+            session = client.session(database="eventgraph1")
+            # print(request.GET.get('kind'))
+            if request.GET.get('kind')== 'event':
+                ret = session.run("match (n:抽象事件) return n")
+            elif request.GET.get('kind')== 'entity':
+                ret = session.run("match (n:抽象实体) return n")
+            event_list = []
+            for item in ret.data():
+                event_list.append(item['n']['name'])
+            
+            # 构建响应数据
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "成功",
+                "data": event_list
+                }
+            return Response(response_data)
+            # 构建响应数据
+            # return Response({
+            #     'success': True,
+            #     'code': 20000,
+            #     'message': 'success',
+            #     'data': event_list
+            # })
+        
+
+class getEventGraphView(APIView):
+    def post(self, request):
+        # 获取请求参数
+        event_name = request.data.get('event_name')
+
+#---------------------------------#
+
+
+
+#------------ 热点预测 ------------#
+
+class getTrendFrequencyView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        word_frequencies = []
+        file_path = os.path.join('trend_prediction/data', 'tiktok_中山大学_05_keyword_counts.csv')
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader)  # 跳过表头
+            
+            for keyword, total_count in reader:
+                # 直接读取关键字和计数，无需转换，因为它们已经是预期的格式
+                word_frequencies.append({'name': keyword, 'value': int(total_count)})
+        
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "successfully add user info",
+            "data": word_frequencies
+        }
+        
+        return Response(response_data)
+    
+
+class getTrendRankingView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        trend_ranking = []
+        file_path = os.path.join('trend_prediction/data', 'tiktok_中山大学_07_title_ranking.csv')
+        # file_path = os.path.join('trend_prediction/data', 'tiktok_中山大学_05_keyword_counts.csv')
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader)  # 跳过表头
+            
+            for title, trending_probability, topic in reader:
+                # 直接读取关键字和计数，无需转换，因为它们已经是预期的格式
+                trend_ranking.append({'name': title, 'value': trending_probability, 'type': topic})
+            # for keyword, total_count in reader:
+            #     # 直接读取关键字和计数，无需转换，因为它们已经是预期的格式
+            #     trend_ranking.append({'name': keyword, 'value': int(total_count)})
+        
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "successfully fetched trend ranking data",
+            "data": trend_ranking
+        }
+        
+        return Response(response_data)
+    
+
+class getTrendHotspotView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        word_frequencies = []
+        total_sum = 0  # 用于累加所有的sample_count
+        file_path = os.path.join('trend_prediction/data', 'tiktok_中山大学_06_cluster_keywords_topics.csv')
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader)  # 跳过表头
+            
+            # 第一次遍历以计算总频数和
+            for _, sample_count_str in reader:
+                sample_count = int(sample_count_str)
+                total_sum += sample_count
+                
+            # 将文件指针重置到开始，以便再次遍历
+            f.seek(0)
+            next(reader)  # 再次跳过表头
+            
+            # 第二次遍历以计算百分比
+            for topic, sample_count_str in reader:
+                sample_count = int(sample_count_str)
+                # 计算百分比
+                percent = (sample_count / total_sum) * 100 if total_sum != 0 else 0
+                word_frequencies.append({'hotspot': topic, 'score': round(percent, 2)})
+        
+        response_data = {
+            "success": True,
+            "code": 20000,
+            "message": "成功",
+            "data": word_frequencies
+        }
+        
+        return Response(response_data)
+
+#---------------------------------#
+class addUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Both way can get info from POST
+        new_username = request.data.get('username')
+        new_password = 123456
+        new_is_staff= request.data.get('is_staff')
+
+        print(f"username: {new_username}, password:{new_password}")
+        new_user=UserInfo(username=new_username,password=new_password,is_staff=new_is_staff)
+
+        # if the username already exist, report error
+        if UserInfo.objects.filter(username=new_username).exists():
+            response_data={
+                "success": False,
+                "code": 40001,
+                "message": "username already exist",
+            }
+            return Response(response_data)
+        # Check if username or password is empty in frontend
+        try:
+            new_user.save()
+
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "Successfully add user info",
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data={
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to add user info: str{e}"
+            }
+            return Response(response_data)
+
+class deleteUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        print(request)
+        username = request.data.get('username')
+        print(f"username: {username}")
+        if not UserInfo.objects.filter(username=username).exists():
+            response_data={
+                "success": False,
+                "code": 40001,
+                "message": "user not exists",
+            }
+            return Response(response_data)
+        try:
+            UserInfo.objects.filter(username=username).delete()
+            response_data={
+                "success": True,
+                "code": 20000,
+                "message": "successfully update user info",
+            }
+            return Response(response_data)
+
+        except Exception as e:
+            response_data={
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to update user info: str{e}"
+            }
+            return Response(response_data)
+
+class changeAdminView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        user_set=UserInfo.objects.filter(username=username)
+        user=user_set.first()
+        is_staff=user.is_staff
+        print(is_staff)
+        try:
+            if is_staff==True:
+                UserInfo.objects.filter(username=username).update(is_staff=False)
+                response_data={
+                    "success": True,
+                    "code": 20000,
+                    "message": "successfully change user admin permission",
+                }
+                return Response(response_data)
+            else:
+                UserInfo.objects.filter(username=username).update(is_staff=True)
+                response_data={
+                    "success": True,
+                    "code": 20000,
+                    "message": "successfully change user admin permission",
+                }
+                return Response(response_data)
+
+        except Exception as e:
+            response_data={
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to delete user info: str{e}"
+            }
+            return Response(response_data)
+
+
+class updateUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request,*args, **kwargs):
+        print(request)
+        username = request.data.get('username')
+        new_password= 123456
+        # new_password = request.POST.get('password')
+        print(f"username: {username}, password:{new_password}")
+        if not UserInfo.objects.filter(username=username).exists():
+            response_data={
+                "success": False,
+                "code": 40001,
+                "message": "user not exists",
+            }
+            return Response(response_data)
+        try:
+            UserInfo.objects.filter(username=username).update(password=new_password)
+            response_data={
+                "success": True,
+                "code": 20000,
+                "message": "successfully update user info",
+            }
+            return Response(response_data)
+
+        except Exception as e:
+            response_data = {
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to update user info: str{e}"
+            }
+            return Response(response_data)
+
+class isStaffView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self,request, *args, **kwargs):
+        username = request.POST.get('username')
+        try:
+            user = UserInfo.objects.get(username=username)
+            is_staff = user.is_staff
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "is staff",
+                "data": is_staff
+            }
+            return Response(response_data)
+
+        except Exception as e:
+            response_data = {
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to judge if staff"
+            }
+            return Response(response_data)
+
+class getUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+class getAllUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user_list = []
+            for user in UserInfo.objects.all():
+                user_list.append([user.username, user.is_staff])
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "successfully get user info",
+                "data": user_list
+            }
+            return Response(response_data)
+
+        except Exception as e:
+            response_data = {
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to update user info: str{e}"
+            }
+            return Response(response_data)
+class modifyPasswordView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        print(request.data)
+        old_password = request.data.get('oldPassword')
+        new_password = request.data.get('newPassword')
+        print(f"old_password: {old_password}, new_password: {new_password}")
+        # 检验旧password
+        if not UserInfo.objects.filter(username=request.user.username, password=old_password).exists():
+            response_data = {
+                "success": False,
+                "code": 40001,
+                "message": "old password is wrong",
+            }
+            return Response(response_data)
+        # 修改密码
+        try:
+            UserInfo.objects.filter(username=request.user.username).update(password=new_password)
+            response_data = {
+                "success": True,
+                "code": 20000,
+                "message": "successfully update user info",
+            }
+            return Response(response_data)
+        
+        except Exception as e:
+            response_data = {
+                "success": False,
+                "code": 50000,
+                "message": f"Failed to update user info: str{e}"
+            }
+            return Response(response_data)
+        

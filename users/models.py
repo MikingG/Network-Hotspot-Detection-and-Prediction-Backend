@@ -7,12 +7,12 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomUserManager(BaseUserManager):
     """
-    自定义用户模型管理器，使用邮箱作为唯一标识符，并支持密码的创建。
+    自定义用户模型管理器，使用用户名作为唯一标识符，并支持密码的创建。
     """
 
     def create_user(self, username, password=None, **extra_fields):
         """
-        创建并保存一个具有给定邮箱和密码的用户。
+        创建并保存一个具有给定用户名和密码的用户。
         """
         if not username:
             raise ValueError(_('The Username must be set'))

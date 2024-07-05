@@ -3,3 +3,9 @@ __pycache__
 .idea
 venv/
 venv/Lib/site-packages/
+venv
+myenv
+event_graph/apikey1.txt
+event_graph/apikey.txt
+event_graph/acge_text_embedding
+debug.log
