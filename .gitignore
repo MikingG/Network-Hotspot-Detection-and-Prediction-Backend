@@ -1,5 +1,8 @@
 apikey.txt
 __pycache__
+.idea
+venv/
+venv/Lib/site-packages/
 venv
 myenv
 event_graph/apikey1.txt
