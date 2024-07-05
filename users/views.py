@@ -136,9 +136,9 @@ class getHotspotsView(APIView):
             for row in reader:
                 hotspot = row['Event Title']
                 score = int(row['Number of news items'])
-                transformed_score = math.log(score + 2)  # 使用自然对数
-                random_noise = random.uniform(-0.5, 0.5)  # 生成一个范围在-5到5之间的随机数
-                final_score = transformed_score + random_noise
+                final_score = math.log(score + 2)  # 使用自然对数
+                # random_noise = random.uniform(-0.2, 0.2)  # 生成一个范围在-5到5之间的随机数
+                # final_score = transformed_score + random_noise
                 # 将提取的数据添加到data列表中
                 data.append({'hotspot': hotspot, 'score': final_score})
         # 构造响应数据
