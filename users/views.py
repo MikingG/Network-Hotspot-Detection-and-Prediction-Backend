@@ -396,6 +396,14 @@ class deleteUserView(APIView):
         print(request)
         username = request.data.get('username')
         print(f"username: {username}")
+        # Check if the user is trying to delete themselves
+        if username == request.user.username:
+            response_data={
+                "success": False,
+                "code": 40300,
+                "message": "You cannot delete yourself.",
+            }
+            return Response(response_data)
         if not UserInfo.objects.filter(username=username).exists():
             response_data={
                 "success": False,
