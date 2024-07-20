@@ -425,12 +425,20 @@ class changeAdminView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
+        admin_username = request.user.username
         username = request.data.get('username')
         user_set=UserInfo.objects.filter(username=username)
         user=user_set.first()
         is_staff=user.is_staff
         print(is_staff)
         try:
+            if admin_username == username:
+                response_data={
+                    "success": False,
+                    "code": 40001,
+                    "message": "cannot change your own admin permission",
+                }
+                return Response(response_data)
             if is_staff==True:
                 UserInfo.objects.filter(username=username).update(is_staff=False)
                 response_data={
